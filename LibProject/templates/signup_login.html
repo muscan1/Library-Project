@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Auth</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+                url('/static/NETcircle.png'), 
+                conic-gradient(from 45deg at center, #7c70e4, #c8dbf1, #ab98fd, #0a82f1, #93bbe6);
+            background-blend-mode: overlay; 
+            background-size: cover;
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed;
+            background-color: #93bbe6; 
+
+            color: #334155;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, 'Times New Roman', Times, serif; 
+            padding: 20px;
+        }
+
+        /* Container Card for Form Processing */
+        .form-container {
+            width: 100%;
+            max-width: 480px;
+            background: #f6f5f8;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            font-family: Arial, 'Times New Roman', Times, serif;
+            color: #7c70e4;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        p {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 14px;
+            text-align: center;
+            color: rgb(97, 136, 170);
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #475569;
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 6px;
+        }
+
+        /* Consolidated Inputs System Styling */
+        input[type="text"], 
+        input[type="email"], 
+        input[type="password"] {
+            width: 100%;
+            border-radius: 28px; 
+            border: 1px solid #779ac0; 
+            padding: 12px 16px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9); 
+            color: #334155;
+            outline: none; 
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, 
+        input[type="email"]:focus, 
+        input[type="password"]:focus {
+            border-color: #0a82f1;
+            box-shadow: 0 0 8px rgba(10, 130, 241, 0.3);
+        }
+
+        /* Password Wrapper System */
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-wrapper input {
+            padding-right: 40px;
+        }
+
+        /* Submit Button  */
+        .button-submit {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 28px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-submit:hover {
+            background-color: #0a82f1;
+        }
+
+        /* Subtext Options Toggle Row Wrapper */
+        .toggle-options-row {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 38px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-top: 15px;
+        }
+
+        .toggle-options-row h6 {
+            color: blue;
+            font-family: 'Lucida Sans', sans-serif;
+            font-style: italic;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .toggle-options-row button {
+            background-color: rgba(142, 151, 161, 0.2);
+            color: #007bff;
+            font-family: sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            border: none;
+            border-radius: 28px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-options-row button:hover {
+            background-color: #ab98fd;
+            color: white;
+        }
+
+        /* Password Feedback Helpers Placeholder */
+        .password-strength { margin-top: 5px; height: 4px; width: 100%; background: #e2e8f0; border-radius: 2px; display: none; }
+        .strength-bar { height: 100%; width: 0; border-radius: 2px; transition: width 0.3s ease; }
+        .strength-text, .error-msg { font-size: 12px; margin-top: 4px; color: #ef4444; }
+
+        /* Interface Toggle Class Utility */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+		
+        <!-- MODULE INTERFACE SIGNUP -->
+        <div id="signup-panel">
+            <div class="form-header">
+                <h1>Create Account</h1>
+                <p>Join our library to borrow books & access services.</p>
+            </div>
+
+            <form id="signup-form" action="/signup" method="POST">
+                <label for="fname">First name:</label>
+                <input type="text" id="fname" name="fname" placeholder="Firstname" required>
+              
+                <label for="lname">Last name:</label>
+                <input type="text" id="lname" name="lname" placeholder="Lastname" required>
+
+                <label for="admission">Admission Number:</label>
+                <input type="text" id="admission" name="admission" placeholder="ID" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+								
+                <div>
+                    <label for="password">Password *</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" placeholder="Min 8 chars, 1 uppercase, 1 number" autocomplete="new-password" required>
+                        <span class="status-icon" id="icon-password"></span>
+                    </div>
+                    <div class="password-strength"><div class="strength-bar" id="strength-bar"></div></div>
+                    <div class="strength-text" id="strength-text"></div>
+                    <div class="error-msg" id="err-password"></div>
+                </div>
+
+                <div>
+                    <label for="password">Confirm Password *</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Confirm Password" autocomplete="new-password" required>
+                    </div>
+                </div>
+
+                <input type="submit" value="Register Account" class="button-submit">
+
+                <div class="toggle-options-row">
+                    <h6>Already have an account?</h6>
+                    <button type="button" onclick="showView('login')">Login</button>
+                </div>
+            </form>
+        </div>
+
+        <!--  INTERFACE LOGIN  -->
+        <div id="login-panel" class="hidden">
+            <div class="form-header">
+                <h1>Login Account</h1>
+                <p>Welcome back! Access your library dashboard.</p>
+            </div>
+
+            <!-- FIXED: method must be POST explicitly, matching our backend handler -->
+    <form id="login-form" action="/login" method="POST">
+        <label for="login-username">Username or ID:</label>
+        <!-- FIXED: Added name="username_or_id" -->
+        <input type="text" id="login-username" name="username_or_id" placeholder="Username or Admission ID" required>
+
+        <label for="login-email">Email:</label>
+        <!-- FIXED: Adjusted name attribute to "email" to perfectly match app.py -->
+        <input type="email" id="login-email" name="email" placeholder="example@gmail.com" required>
+
+        <div>
+            <label for="login-password">Password *</label>
+            <div class="input-wrapper">
+                <!-- FIXED: Added name="password" to the login password box -->
+                <input type="password" id="login-password" name="password" placeholder="Enter password" autocomplete="current-password" required>
+            </div>
+        </div>
+
+                <input type="submit" value="Log In" class="button-submit">
+
+                <div class="toggle-options-row">
+                    <h6>Don't have an account?</h6>
+                    <button type="button" onclick="showView('signup')">Sign up</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT PANEL ROUTER ENGINE -->
+    <script>
+        const signupPanel = document.getElementById('signup-panel');
+        const loginPanel = document.getElementById('login-panel');
+
+        function showView(targetPanel) {
+            if (targetPanel === 'login') {
+                signupPanel.classList.add('hidden');
+                loginPanel.classList.remove('hidden');
+            } else {
+                loginPanel.classList.add('hidden');
+                signupPanel.classList.remove('hidden');
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('panel') === 'login') {
+            showView('login');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-attachment: fixed; color: #fff; padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .glass-panel { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 30px; }
+        h1 { margin-bottom: 20px; }
+        .back-link { color: #93c5fd; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+        .book-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .book-title { font-size: 20px; font-weight: bold; color: #60a5fa; }
+        .book-details { color: #cbd5e1; font-size: 14px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container glass-panel">
+        <a href="/dashboard" class="back-link"> Back to Dashboard</a>
+        <h1>Search Results for "{{ query }}"</h1>
+        
+        {% if results %}
+            {% for book in results %}
+            <div class="book-card">
+                <div class="book-title">{{ book[0] }}</div>
+                <div class="book-details">
+                    Author: {{ book[1] }} | ISBN: {{ book[2] }} <br>
+                    Category: {{ book[3] }} | Copies Available: {{ book[4] }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No books found matching your search. Please try a different title, author, or ISBN.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Library Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* MODERN BACKGROUND & OVERLAY */
+    body {
+      background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                        url("{{ url_for('static', filename='libpic.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #ffffff;
+      padding-top: 70px; 
+    }
+
+    /* GLASSMORPHISM NAVBAR */
+    .navbar {
+      width: 100%;
+      height: 70px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 5px;
+    }
+
+    .navbar-menu a {
+      color: #475569;
+      text-decoration: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-menu a:hover {
+      background: #e2e8f0;
+      color: #1e3a8a;
+    }
+
+    .navbar-menu a.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .navbar-menu a.logout {
+      color: #ef4444;
+      border: 1px solid transparent;
+    }
+    
+    .navbar-menu a.logout:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+
+    /* MAIN HERO SECTION */
+    .hero-section {
+      text-align: center;
+      padding: 80px 20px 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-section h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin-bottom: 40px;
+    }
+
+    /* CENTERED SEARCH BAR */
+    .search-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 60px;
+    }
+
+    .search-container {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+
+    .search-input {
+      flex-grow: 1;
+      padding: 15px 25px;
+      font-size: 16px;
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #cbd5e1;
+    }
+
+    .search-btn {
+      padding: 0 30px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .search-btn:hover {
+      background: #1d4ed8;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+    }
+
+    /* DASHBOARD WIDGET CARDS */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card a {
+      display: inline-block;
+      padding: 10px 25px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .card a:hover {
+      background: #2563eb;
+    }
+
+    /* MOBILE HAMBURGER */
+    .hamburger {
+      font-size: 30px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #1e3a8a;
+      display: none; 
+    }
+
+    .sidebar { display: none; }
+
+    @media(max-width: 768px) {
+      .navbar-menu { display: none; }
+      .hamburger { display: block; }
+      
+      .hero-section h1 { font-size: 32px; }
+      .search-container { flex-direction: column; border-radius: 15px; background: transparent; border: none; }
+      .search-input { background: rgba(255, 255, 255, 0.1); border-radius: 15px; margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.2); }
+      .search-btn { padding: 15px; border-radius: 15px; }
+
+      .sidebar {
+        display: block; position: fixed; top: 70px; left: -250px; width: 250px;
+        height: calc(100vh - 70px); background: #1e3a8a; padding-top: 20px;
+        transition: 0.3s ease; z-index: 999; box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+      }
+      .sidebar.active { left: 0; }
+      .sidebar a { display: block; color: white; text-decoration: none; padding: 15px 25px; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP NAVBAR -->
+  <nav class="navbar">
+    <a href="/dashboard" class="navbar-brand">Booklib</a>
+
+    <div class="nav-right">
+      <div class="navbar-menu" id="desktopMenu">
+        <a href="/dashboard" class="active">Home</a>
+        <a href="/forms">Library Forms</a>
+        <a href="/admin" class="nav-link">Admin Management</a>
+        <a href="/logs" class="nav-link">Logs</a>
+        <a href="/logout" class="logout">Logout</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- MOBILE SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <a href="/dashboard">Home</a>
+    <a href="/forms">Library Forms</a>
+    <a href="/admin" class="nav-link">Admin Management</a>
+    <a href="/logs" class="nav-link">Logs</a>
+    <a href="/logout" style="color: #fca5a5;">Logout</a>
+  </div>
+
+  <!-- HERO GREETING SECTION -->
+  <div class="hero-section">
+    <!-- Uses Jinja2 to display the user's name dynamically -->
+    <h1>Welcome back, {{ user_name }}!</h1>
+    <p>Search the catalog, manage inventory, or borrow your next great read.</p>
+    
+    <div class="search-wrapper">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search by title, author, or ISBN..." id="searchInput">
+        <button class="search-btn" onclick="handleSearch()">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTION CARDS GRID -->
+  <div class="dashboard-grid">
+    <div class="card">
+      <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
+      <h3>Add & Borrow</h3>
+      <p>Register new books to the system or check out inventory for users.</p>
+      <a href="/forms">Open Forms</a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon"><i class="fa-solid fa-user-gear" style="color: white;"></i></div>
+      <h3>Admin Panel</h3>
+      <p>Manage users, database connections, and system preferences.</p>
+      <a href="/admin" class="nav-link">Admin Management</a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon"><i class="fa-solid fa-table-list"></i></i></div>
+      <h3>System Logs</h3>
+      <p>View recent transactions, return dates, and overdue items.</p>
+      <a href="/logs" class="nav-link">Logs</a>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    function toggleMenu() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function handleSearch() {
+      const query = document.getElementById("searchInput").value;
+      if(query.trim() !== "") {
+      // Redirects to /search?q=WhateverUserTyped
+      window.location.href = '/search?q=' + encodeURIComponent(query);
+      } else {
+     alert("Please enter a search term.");
+    }
+   }
+
+    document.getElementById("searchInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        handleSearch();
+      }
+    });
+  </script>
+
+</body>
+</html>

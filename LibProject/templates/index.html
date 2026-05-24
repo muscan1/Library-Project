@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Forms - Add/Borrow</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* MATCHING DASHBOARD BACKGROUND */
+        body { 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                              url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* GLASSMORPHISM CARD */
+        .form-card {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 35px 30px;
+            position: relative;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* Navigation Helper */
+        .back-to-dash {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #93c5fd;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        
+        .back-to-dash:hover {
+            color: #ffffff;
+        }
+
+        /* Back Arrow Styling for Borrow Panel */
+        .back-arrow {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-arrow:hover {
+            background-color: rgba(37, 99, 235, 0.8);
+            transform: scale(1.05);
+        }
+
+        .with-arrow h2 {
+            padding-left: 45px;
+        }
+
+        .form-group { 
+            margin-bottom: 18px; 
+        }
+
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        /* TRANSLUCENT INPUT FIELDS */
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 12px 18px;
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.05); 
+            color: #ffffff;
+            outline: none; 
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Color fix for HTML date picker icon */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        /* Buttons Structure */
+        .button-row {
+            display: flex;
+            align-items: center; 
+            gap: 12px;          
+            width: 100%; 
+            margin-top: 25px;
+        }
+
+        .button-row button {
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button[type="submit"] {
+            background-color: #2563eb;
+            color: white;
+            flex-grow: 1;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1d4ed8;
+        }
+
+        .button-row button.btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .button-row button.btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #borrow-option-link {
+            margin-left: auto;
+        }
+
+        #borrow-option-link button {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        #borrow-option-link button:hover {
+            background-color: #7c3aed;
+        }
+
+        #message { 
+            margin-top: 20px; 
+            padding: 12px; 
+            display: none; 
+            border-radius: 12px; 
+            font-weight: 500;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="form-card">
+        <a href="/dashboard" class="back-to-dash"> Back to Dashboard</a>
+
+        <!-- MODULE PANEL A: ADD NEW BOOK INTERFACE -->
+        <div id="add-book-view">
+            <h2>Register New Book</h2>
+            <form id="bookForm">
+                <div class="form-group">
+                    <label for="title">Book Title</label>
+                    <input type="text" id="title" required placeholder="e.g., The Great Gatsby">
+                </div>
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="text" id="author" required placeholder="e.g., F. Scott Fitzgerald">
+                </div>
+                <div class="form-group">
+                    <label for="isbn">ISBN Number</label>
+                    <input type="text" id="isbn" required placeholder="e.g., 9780743273565">
+                </div>
+                <div class="form-group">
+                    <label for="add-category">Category</label>
+                    <input type="text" id="add-category" required placeholder="e.g., Fiction">
+                </div>
+                <div class="form-group">
+                    <label for="add-copies">Quantity</label>
+                    <input type="number" id="add-copies" value="1" min="1" required>
+                </div>
+                
+                <div class="button-row">
+                    <button type="submit">Add to Database</button>
+                    <button type="button" class="btn-secondary" onclick="resetForm('bookForm')">Clear</button> 
+                    <div id="borrow-option-link">
+                        <button type="button" class="btn-borrow" onclick="toggleInterfaceView('borrow')">Borrow</button> 
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!--  MODULE PANEL B: BORROW TRANSACTION INTERFACE -->
+        <div id="borrow-book-view" class="hidden with-arrow">
+            <div class="back-arrow" onclick="toggleInterfaceView('add')" title="Back to Add Book">&#8592;</div>
+            
+            <h2>Borrow a Book</h2>
+            <form id="borrowForm">
+                <div class="form-group">
+                    <label for="borrow-isbn">ISBN Number</label>
+                    <input type="text" id="borrow-isbn" required placeholder="Enter book ISBN...">
+                </div>
+                <div class="form-group">
+                    <label for="borrow-date">Issue Date</label>
+                    <input type="date" id="borrow-date" required>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit">Process Borrow</button>
+                    <button type="button" class="btn-secondary" onclick="toggleInterfaceView('add')">Cancel</button> 
+                </div>
+            </form>
+        </div>
+
+        <!-- Feedback Notification Banner -->
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const addBookView = document.getElementById('add-book-view');
+        const borrowBookView = document.getElementById('borrow-book-view');
+        const messageDiv = document.getElementById('message');
+
+        function toggleInterfaceView(viewMode) {
+            clearMessage();
+            resetForm('bookForm');
+            resetForm('borrowForm');
+            
+            if (viewMode === 'borrow') {
+                addBookView.classList.add('hidden');
+                borrowBookView.classList.remove('hidden');
+            } else {
+                borrowBookView.classList.add('hidden');
+                addBookView.classList.remove('hidden');
+            }
+        }
+
+        function resetForm(formId) {
+            document.getElementById(formId).reset();
+            clearMessage();
+        }
+
+        function clearMessage() {
+            messageDiv.style.display = 'none';
+            messageDiv.innerText = '';
+        }
+
+        async function handleFormSubmit(e, apiEndpoint, payloadBuilder, successMsg) {
+            e.preventDefault();
+            clearMessage();
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payloadBuilder())
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                    messageDiv.style.border = '1px solid #22c55e';
+                    messageDiv.style.color = '#86efac';
+                    messageDiv.innerText = successMsg;
+                    e.target.reset(); 
+                } else {
+                    throw new Error(result.error || "Failed data processing.");
+                }
+            } catch (error) {
+                messageDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                messageDiv.style.border = '1px solid #ef4444';
+                messageDiv.style.color = '#fca5a5';
+                messageDiv.innerText = "? Error: " + error.message;
+            }
+            messageDiv.style.display = 'block';
+        }
+
+        // Add Book Form Binding
+        document.getElementById('bookForm').addEventListener('submit', (e) => {
+            handleFormSubmit(
+                e, 
+                '/api/books', 
+                () => ({
+                    title: document.getElementById('title').value,
+                    author: document.getElementById('author').value,
+                    isbn: document.getElementById('isbn').value,
+                    category: document.getElementById('add-category').value,
+                    copies: document.getElementById('add-copies').value
+                }),
+                " Book successfully added to database!"
+            );
+        });
+
+        // Borrow Book Form Binding
+        document.getElementById('borrowForm').addEventListener('submit', (e) => {
+            handleFormSubmit(
+                e, 
+                '/api/borrow', 
+                () => ({
+                    isbn: document.getElementById('borrow-isbn').value,
+                    issueDate: document.getElementById('borrow-date').value
+                }),
+                "?? Borrow log transaction successfully processed!"
+            );
+        });
+    </script>
+</body>
+</html>

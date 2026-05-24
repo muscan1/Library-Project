@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Auth</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* MATCHING DASHBOARD BACKGROUND */
+        body {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                              url("{{ url_for('static', filename='libpic.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* GLASSMORPHISM CARD */
+        .form-container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-header h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .form-header p {
+            font-size: 15px;
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        /* TRANSLUCENT INPUT FIELDS */
+        input[type="text"], 
+        input[type="email"], 
+        input[type="password"] {
+            width: 100%;
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 14px 20px;
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.05); 
+            color: #ffffff;
+            outline: none; 
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+        }
+
+        /* SUBMIT BUTTON */
+        .button-submit {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 25px;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .button-submit:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* TOGGLE OPTIONS ROW */
+        .toggle-options-row {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .toggle-options-row h6 {
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .toggle-options-row button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-options-row button:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Flash Message Styling */
+        .flashes { list-style: none; padding: 0; margin-bottom: 15px; }
+        .flashes li { padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; margin-bottom: 10px;}
+        .flashes li.danger { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; }
+        .flashes li.success { background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #86efac; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        
+        <!-- Flask Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <!-- MODULE INTERFACE SIGNUP -->
+        <div id="signup-panel">
+            <div class="form-header">
+                <h1>Create Account</h1>
+                <p>Join our library to borrow books & access services.</p>
+            </div>
+
+            <form id="signup-form" action="/signup" method="POST">
+                <label for="fname">First name:</label>
+                <input type="text" id="fname" name="fname" placeholder="Firstname" required>
+              
+                <label for="lname">Last name:</label>
+                <input type="text" id="lname" name="lname" placeholder="Lastname" required>
+
+                <label for="admission">Admission Number:</label>
+                <input type="text" id="admission" name="admission" placeholder="ID" required>
+
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" name="email" placeholder="example@gmail.com" required>
+								
+                <label for="signup-password">Password *</label>
+                <input type="password" id="signup-password" name="password" placeholder="Min 8 chars, 1 uppercase, 1 number" required>
+
+                <input type="submit" value="Register Account" class="button-submit">
+
+                <div class="toggle-options-row">
+                    <h6>Already have an account?</h6>
+                    <button type="button" onclick="showView('login')">Login</button>
+                </div>
+            </form>
+        </div>
+
+        <!--  INTERFACE LOGIN  -->
+        <div id="login-panel" class="hidden">
+            <div class="form-header">
+                <h1>Login Account</h1>
+                <p>Welcome back! Access your library dashboard.</p>
+            </div>
+
+            <!-- Simplified Login Form connecting perfectly to your backend -->
+            <form id="login-form" action="/login" method="POST">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="email" placeholder="example@gmail.com" required>
+
+                <label for="login-password">Password *</label>
+                <input type="password" id="login-password" name="password" placeholder="Enter password" required>
+
+                <input type="submit" value="Log In" class="button-submit">
+
+                <div class="toggle-options-row">
+                    <h6>Don't have an account?</h6>
+                    <button type="button" onclick="showView('signup')">Sign up</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT PANEL ROUTER ENGINE -->
+    <script>
+        const signupPanel = document.getElementById('signup-panel');
+        const loginPanel = document.getElementById('login-panel');
+
+        function showView(targetPanel) {
+            if (targetPanel === 'login') {
+                signupPanel.classList.add('hidden');
+                loginPanel.classList.remove('hidden');
+            } else {
+                loginPanel.classList.add('hidden');
+                signupPanel.classList.remove('hidden');
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('panel') === 'login') {
+            showView('login');
+        }
+    </script>
+</body>
+</html>
